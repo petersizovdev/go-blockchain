@@ -1,28 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
+	"os"
 
 	"github.com/petersizovdev/go-blockchain.git/blockchain"
+	"github.com/petersizovdev/go-blockchain.git/cli"
 )
 
 func main() {
+	defer os.Exit(0)
 	chain := blockchain.InitBlockChain()
+	defer chain.Database.Close()
 
-	chain.AddBlock("Second Block")
-	chain.AddBlock("Third Block")
-	chain.AddBlock("Fourth Block")
-
-	for _, block := range chain.Blocks {
-		
-		fmt.Printf("PrevHash: %x\n", block.PrevHash)
-		fmt.Printf("BlockData: %s\n", block.Data)
-		fmt.Printf("BlockHash: %x\n", block.Hash)
-
-		pow:= blockchain.NewProof(block)
-		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
-
-		fmt.Println()
-	}
+	cl := cli.NewCommandLine(chain)
+	cl.Run()
 }
